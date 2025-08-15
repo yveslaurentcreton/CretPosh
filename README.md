@@ -1,4 +1,4 @@
-# CretPosh - PowerShell Jet Tools
+# CretPosh - PowerShell Tools
 
 CretPosh is a PowerShell module that extends the functionality of PowerShell with additional, essential commands not available in the standard library. Designed for IT professionals, CretPosh aims to enhance productivity by providing powerful, efficient tools.
 

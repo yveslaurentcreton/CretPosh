@@ -1,0 +1,64 @@
+name: Release
+
+on:
+  workflow_call:
+
+jobs:
+  release:
+    name: Semantic Release + Publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+
+      - name: Prepare prerelease semantic
+        if: github.ref != 'refs/heads/main'
+        run: mv .releaserc.prerelease.yaml .releaserc.yaml
+
+      - name: Semantic Release
+        id: semantic
+        uses: cycjimmy/semantic-release-action@v4
+        with:
+          extra_plugins: |
+            @semantic-release/changelog
+            @semantic-release/exec
+            @semantic-release/git
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Apply version to CretPosh manifest
+        if: steps.semantic.outputs.new_release_published == 'true'
+        shell: pwsh
+        run: |
+          $version = "${{ steps.semantic.outputs.new_release_version }}"
+          $mainVersion = "${{ steps.semantic.outputs.new_release_major_version }}.${{ steps.semantic.outputs.new_release_minor_version }}.${{ steps.semantic.outputs.new_release_patch_version }}"
+          $prerelease = $version -replace "^$mainVersion-", ""
+          $manifestFile = Get-ChildItem "./src/Modules/CretPosh/CretPosh.psd1"
+          $content = Get-Content $manifestFile -Raw
+          $content = $content.Replace("[[version]]", $mainVersion);
+          $content = $content.Replace("[[prerelease]]", $prerelease);
+          Set-Content -Value $content -Path $manifestFile
+
+      - name: Prepare PowerShellGet
+        if: steps.semantic.outputs.new_release_published == 'true'
+        shell: pwsh
+        run: |
+          Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
+          Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser
+
+      - name: Publish CretPosh to PowerShell Gallery
+        if: steps.semantic.outputs.new_release_published == 'true'
+        shell: pwsh
+        env:
+          NUGET_APIKEY: ${{ secrets.POWERSHELL_GALLERY_NUGET_APIKEY }}
+        run: |
+          Publish-Module -Path ./src/Modules/CretPosh/ -NuGetApiKey $env:NUGET_APIKEY -Verbose

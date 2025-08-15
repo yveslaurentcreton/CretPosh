@@ -1,10 +1,12 @@
 name: CI/CD
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
+      - dev/*
+      - feature/*
+      - hotfix/*
 
 jobs:
   build:
@@ -12,6 +14,7 @@ jobs:
     uses: ./.github/workflows/build.yaml
     permissions:
       security-events: write
+
   test:
     name: Test
     needs: build
@@ -20,10 +23,11 @@ jobs:
       contents: read
       actions: read
       checks: write
-  deploy:
-    name: Deploy to PowerShell Gallery
+
+  release:
+    name: Release
     needs: test
-    uses: ./.github/workflows/deploy.yaml
-    secrets: inherit
+    uses: ./.github/workflows/release.yaml
     permissions:
       contents: write
+    secrets: inherit
