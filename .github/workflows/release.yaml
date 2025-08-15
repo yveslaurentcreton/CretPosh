@@ -48,13 +48,6 @@ jobs:
           $content = $content.Replace("[[prerelease]]", $prerelease);
           Set-Content -Value $content -Path $manifestFile
 
-      - name: Prepare PowerShellGet
-        if: steps.semantic.outputs.new_release_published == 'true'
-        shell: pwsh
-        run: |
-          Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
-          Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser
-
       - name: Publish CretPosh to PowerShell Gallery
         if: steps.semantic.outputs.new_release_published == 'true'
         shell: pwsh
