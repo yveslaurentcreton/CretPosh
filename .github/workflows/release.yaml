@@ -42,10 +42,21 @@ jobs:
           $version = "${{ steps.semantic.outputs.new_release_version }}"
           $mainVersion = "${{ steps.semantic.outputs.new_release_major_version }}.${{ steps.semantic.outputs.new_release_minor_version }}.${{ steps.semantic.outputs.new_release_patch_version }}"
           $prerelease = $version -replace "^$mainVersion-", ""
+          # Clean prerelease to only allow alphanumeric chars
+          if ($prerelease) {
+              $prerelease = $prerelease -replace '[^a-zA-Z0-9]', ''
+          }
+          Write-Host "Debug version info:"
+          Write-Host "Full version: $version"
+          Write-Host "Main version: $mainVersion"
+          Write-Host "Prerelease: $prerelease"
+          Write-Host "---"
           $manifestFile = Get-ChildItem "./src/Modules/CretPosh/CretPosh.psd1"
           $content = Get-Content $manifestFile -Raw
           $content = $content.Replace("[[version]]", $mainVersion);
           $content = $content.Replace("[[prerelease]]", $prerelease);
+          Write-Host "Updated manifest content:"
+          Write-Host $content
           Set-Content -Value $content -Path $manifestFile
 
       - name: Publish CretPosh to PowerShell Gallery
