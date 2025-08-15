@@ -1,9 +1,9 @@
 <#
 .SYNOPSIS
-    Sets or updates a property in the PSJet Installer state.
+    Sets or updates a property in the CretPosh Installer state.
 
 .DESCRIPTION
-    The `Set-PSJetInstallerProperty` function sets or updates a property in the PSJet Installer state.
+    The `Set-CretPoshInstallerProperty` function sets or updates a property in the CretPosh Installer state.
     If the property does not exist, it is added. If it does exist, its value is updated.
 
 .PARAMETER Name
@@ -13,7 +13,7 @@
     Specifies the value to be assigned to the property.
 
 .EXAMPLE
-    Set-PSJetInstallerProperty -Name "InstallationDate" -Value (Get-Date)
+    Set-CretPoshInstallerProperty -Name "InstallationDate" -Value (Get-Date)
 
     Description
     -----------
@@ -22,7 +22,7 @@
 .NOTES
     If you modify the state inside this function, ensure to call a function to save the state afterwards if persistent storage is desired.
 #>
-function Set-PSJetInstallerProperty {
+function Set-CretPoshInstallerProperty {
     param (
         [Parameter(Mandatory=$true)]
         [string]$Name,
@@ -32,7 +32,7 @@ function Set-PSJetInstallerProperty {
     )
 
     # Get state
-    $state = Get-PSJetInstallerState
+    $state = Get-CretPoshInstallerState
 
     # Check if the property already exists
     if ($state.PSObject.Properties.Name -contains $Name) {

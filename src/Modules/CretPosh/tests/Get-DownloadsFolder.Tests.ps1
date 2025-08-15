@@ -1,5 +1,5 @@
 BeforeAll {
-    Import-Module (Join-Path $PSScriptRoot "../PSJet.psm1")
+    Import-Module (Join-Path $PSScriptRoot "../CretPosh.psm1")
 
     function Get-MacOSVersion {
         # Get macOS version using sw_vers command

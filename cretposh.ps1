@@ -4,9 +4,9 @@ powershell -NoProfile -Command {
   Install-Module PowerShellGet -Force
 }
 
-# Install PSJet module
+# Install CretPosh module
 powershell -NoProfile -Command {
-  Install-Module -Name PSJet -AllowPrerelease -Force
+  Install-Module -Name CretPosh -AllowPrerelease -Force
 }
 
 # Install WinGet
@@ -28,9 +28,9 @@ powershell -NoProfile -Command {
   Update-PSEnvironmentVariables
 }
 
-# Install PSJet in PowerShell
+# Install CretPosh in PowerShell
 pwsh -NoProfile -Command {
-  Install-Module -Name PSJet -AllowPrerelease -Force
+  Install-Module -Name CretPosh -AllowPrerelease -Force
 }
 
-Write-Output "Installation complete. You can now use PSJet with PowerShell in Windows Terminal"
+Write-Output "Installation complete. You can now use CretPosh with PowerShell in Windows Terminal"

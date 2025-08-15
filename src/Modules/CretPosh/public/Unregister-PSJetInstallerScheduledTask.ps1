@@ -1,10 +1,10 @@
 <#
     .SYNOPSIS
-        Unregisters the scheduled task associated with the PSJet installer.
+        Unregisters the scheduled task associated with the CretPosh installer.
 
     .DESCRIPTION
-        The `Unregister-PSJetInstallerScheduledTask` function removes the scheduled task related 
-        to the PSJet installer if it exists. The task is identified using the "\PSJet\" path 
+        The `Unregister-CretPoshInstallerScheduledTask` function removes the scheduled task related 
+        to the CretPosh installer if it exists. The task is identified using the "\CretPosh\" path 
         and name obtained from the `Get-InvocationScript` function or provided explicitly. 
         No action is taken if the task does not exist.
 
@@ -12,18 +12,18 @@
         The path to the installer script. Optional; if not specified, the name is obtained using `Get-InvocationScript`.
 
     .EXAMPLE
-        Unregister-PSJetInstallerScheduledTask
+        Unregister-CretPoshInstallerScheduledTask
 
         Description
         -----------
-        Attempts to unregister (remove) the scheduled task related to the PSJet installer.
+        Attempts to unregister (remove) the scheduled task related to the CretPosh installer.
 
     .NOTES
         - Ensure that the user has the appropriate permissions to remove a scheduled task in Windows.
         - The function will silently ignore cases where the scheduled task does not exist.
         - Ensure that other processes are not dependent on the existing scheduled task as it will be unregistered without confirmation.
 #>
-function Unregister-PSJetInstallerScheduledTask {
+function Unregister-CretPoshInstallerScheduledTask {
     param (
         [string]$InstallerScript
     )
@@ -32,7 +32,7 @@ function Unregister-PSJetInstallerScheduledTask {
         $InstallerScript = Get-InvocationScript
     }
 
-    $taskPath = "\PSJet\"
+    $taskPath = "\CretPosh\"
     $taskName = Get-Item $InstallerScript | Select-Object -ExpandProperty BaseName
     $installerScheduledTask = (Get-ScheduledTask -TaskPath $taskPath -TaskName $taskName -ErrorAction SilentlyContinue)
 

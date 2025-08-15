@@ -1,9 +1,9 @@
 <#
     .SYNOPSIS
-        Initiates the PSJet installer process, executing scripts sequentially with optional restarts and persistent state across restarts.
+        Initiates the CretPosh installer process, executing scripts sequentially with optional restarts and persistent state across restarts.
 
     .DESCRIPTION
-        The `Invoke-PSJetInstaller` function orchestrates a sequential execution of installation step scripts, 
+        The `Invoke-CretPoshInstaller` function orchestrates a sequential execution of installation step scripts, 
         handling script state management, optional self-elevation for administrative privileges, 
         and conditional system restarts with installation state persistence.
 
@@ -25,11 +25,11 @@
 
     .PARAMETER EnableRestart
         If specified, enables handling of system restarts and ensures the installation continues 
-        from the last step by leveraging scheduled tasks, registered, and unregistered by `Register-PSJetInstallerScheduledTask`
-        and `Unregister-PSJetInstallerScheduledTask` respectively.
+        from the last step by leveraging scheduled tasks, registered, and unregistered by `Register-CretPoshInstallerScheduledTask`
+        and `Unregister-CretPoshInstallerScheduledTask` respectively.
 
     .EXAMPLE
-        Invoke-PSJetInstaller -AsAdmin -EnableRestart
+        Invoke-CretPoshInstaller -AsAdmin -EnableRestart
 
         Description
         -----------
@@ -38,11 +38,11 @@
     .NOTES
         - Installation step scripts should reside in "$installerDirectory\Steps\".
         - Scripts must be named to enforce execution order (e.g., 01-FirstStep.ps1, 02-SecondStep.ps1).
-        - Step scripts use `Get-PSJetInstallerState` for state management and persistence across restarts.
+        - Step scripts use `Get-CretPoshInstallerState` for state management and persistence across restarts.
         - A step script can request a system restart by assigning `$true` to `$state.restartComputer`.
         - User prompts on restart can be suppressed by assigning `$true` to `$state.autoRestartComputer`.
-        - The `Invoke-ElevateAsAdmin`, `Register-PSJetInstallerScheduledTask`, and `Unregister-PSJetInstallerScheduledTask` functions 
-        should be defined and accessible within the scope of `Invoke-PSJetInstaller`.
+        - The `Invoke-ElevateAsAdmin`, `Register-CretPoshInstallerScheduledTask`, and `Unregister-CretPoshInstallerScheduledTask` functions 
+        should be defined and accessible within the scope of `Invoke-CretPoshInstaller`.
 
     .OUTPUTS
         None. Outputs to host and might restart the computer, terminating the PowerShell session.
@@ -50,7 +50,7 @@
     .INPUTS
         None. All inputs are handled through parameters.
 #>
-function Invoke-PSJetInstaller {
+function Invoke-CretPoshInstaller {
     param (
         [Parameter()]
         [switch]$AsAdmin,
@@ -65,11 +65,11 @@ function Invoke-PSJetInstaller {
 
     # Schedule the installer to run at logon
     if ($EnableRestart) {
-        Register-PSJetInstallerScheduledTask
+        Register-CretPoshInstallerScheduledTask
     }
 
     # Set state
-    $state = Get-PSJetInstallerState
+    $state = Get-CretPoshInstallerState
     $installerDirectory = Get-InvocationDirectory
     $steps = Get-ChildItem -Path "$installerDirectory\Steps\*.ps1" | Sort-Object FullName
 
@@ -101,7 +101,7 @@ function Invoke-PSJetInstaller {
         if ($EnableRestart -and $state.restartComputer) {
             
             $state.restartComputer = $false
-            Save-PSJetInstallerState
+            Save-CretPoshInstallerState
 
             Write-Warning 'The installer will continue after the computer is restarted. The computer will now restart.' -WarningAction Continue
 
@@ -115,11 +115,11 @@ function Invoke-PSJetInstaller {
     }
 
     if ($EnableRestart) {
-        Unregister-PSJetInstallerScheduledTask
+        Unregister-CretPoshInstallerScheduledTask
     }
 
     # Remove state
-    $stateAppData = Get-PSJetInstallerAppData
+    $stateAppData = Get-CretPoshInstallerAppData
     Remove-Item -Path $stateAppData.StateJsonPath -Force
 
     # Finish
