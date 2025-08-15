@@ -41,10 +41,11 @@ jobs:
         run: |
           $version = "${{ steps.semantic.outputs.new_release_version }}"
           $mainVersion = "${{ steps.semantic.outputs.new_release_major_version }}.${{ steps.semantic.outputs.new_release_minor_version }}.${{ steps.semantic.outputs.new_release_patch_version }}"
-          $prerelease = $version -replace "^$mainVersion-", ""
-          # Clean prerelease to only allow alphanumeric chars
-          if ($prerelease) {
-              $prerelease = $prerelease -replace '[^a-zA-Z0-9]', ''
+          # Only extract prerelease if version is different from mainVersion
+          $prerelease = if ($version -ne $mainVersion) {
+              ($version -replace "^$mainVersion-", "").Trim() -replace '[^a-zA-Z0-9]', ''
+          } else {
+              ""
           }
           Write-Host "Debug version info:"
           Write-Host "Full version: $version"
