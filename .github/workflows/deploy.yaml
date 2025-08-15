@@ -25,20 +25,20 @@ jobs:
         with:
           versionSpec: "5.x"
 
-      - name: Apply version to PSJet manifest
+      - name: Apply version to CretPosh manifest
         shell: pwsh
         run: |
           $version = "${{ env.GitVersion_MajorMinorPatch }}"
           $prerelease = "${{ env.GitVersion_NuGetPreReleaseTagV2 }}"
-          $manifestFile = Get-ChildItem ".\src\Modules\PSJet\PSJet.psd1"
+          $manifestFile = Get-ChildItem ".\src\Modules\CretPosh\CretPosh.psd1"
           $content = Get-Content $manifestFile -Raw
           $content = $content.Replace("[[version]]", $version);
           $content = $content.Replace("[[prerelease]]", $prerelease);
           Set-Content -Value $content -Path $manifestFile
 
-      - name: Publish PSJet to PowerShell Gallery
+      - name: Publish CretPosh to PowerShell Gallery
         shell: pwsh
-        run: Publish-Module -Path .\src\Modules\PSJet\ -NuGetApiKey ${{ secrets.POWERSHELL_GALLERY_NUGET_APIKEY }}
+        run: Publish-Module -Path .\src\Modules\CretPosh\ -NuGetApiKey ${{ secrets.POWERSHELL_GALLERY_NUGET_APIKEY }}
 
       - name: Create Release
         id: create_release
@@ -58,6 +58,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./psjet.ps1
-          asset_name: psjet.ps1
+          asset_path: ./cretPosh.ps1
+          asset_name: cretPosh.ps1
           asset_content_type: application/x-powershell

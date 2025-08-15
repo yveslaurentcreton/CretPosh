@@ -27,7 +27,7 @@ Author = 'Yves-Laurent Creton'
 # CompanyName = 'Unkown'
 
 # Copyright statement for this module
-Copyright = '(c) 2024 Yves-Laurent Creton. All rights reserved.'
+Copyright = '(c) 2025 Yves-Laurent Creton. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'A collection of PowerShell functions for administrative tasks.'
